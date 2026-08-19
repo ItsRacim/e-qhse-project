@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Employee {
+  id             String   @id @default(cuid())
+  name           String
+  position       String
+  department     String
+  pinCode        String   @unique
+  qrCodeData     String   @unique
+  certifications String   @default("")
+  role           String   @default("WORKER")
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  reportsCreated    Report[]           @relation("ReportCreator")
+  correctiveActions CorrectiveAction[] @relation("CorrectiveActionAssignee")
+  approvedReports   Report[]           @relation("ReportApprover")
+  authorizedPermits Report[]           @relation("PermitWorkers")
+}
+
+model Report {
+  id               String   @id @default(cuid())
+  title            String
+  type             String
+  content          String
+  location         String?
+  severity         String?
+  immediateActions String?
+  permitType       String?
+  details          String?
+  startDate        DateTime?
+  endDate          DateTime?
+  extendedUntil    DateTime?
+  extensionReason  String?
+  extensionCount   Int      @default(0)
+  status           String   @default("DRAFT")
+  approvedHash     String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  createdById String   @map("createdBy")
+  createdBy   Employee @relation("ReportCreator", fields: [createdById], references: [id])
+
+  approvedById String?   @map("approvedBy")
+  approvedBy   Employee? @relation("ReportApprover", fields: [approvedById], references: [id])
+
+  authorizedWorkers Employee[] @relation("PermitWorkers")
+
+  correctiveActions CorrectiveAction[]
+
+  @@index([type])
+  @@index([status])
+}
+
+model CorrectiveAction {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("OPEN")
+  priority    String   @default("MEDIUM")
+  dueDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignedToId String   @map("assignedTo")
+  assignedTo   Employee @relation("CorrectiveActionAssignee", fields: [assignedToId], references: [id])
+
+  reportId String? @map("reportId")
+  report   Report? @relation(fields: [reportId], references: [id])
+
+  @@index([status])
+  @@index([assignedToId])
+}
