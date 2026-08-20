@@ -156,6 +156,15 @@ export default function HeightWorkPermitForm({
               className={inputCls}
             />
           </div>
+          <div>
+            <FieldLabel>{t("heightWork.endDate")}</FieldLabel>
+            <input
+              type="datetime-local"
+              value={details.endDate}
+              onChange={(e) => patch("endDate", e.target.value)}
+              className={inputCls}
+            />
+          </div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3">
           <p className="mb-2 text-sm font-medium text-slate-800">

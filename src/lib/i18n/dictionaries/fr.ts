@@ -200,6 +200,7 @@ export const fr: Dictionary = {
     permitFolio: "Permis N° / Folio",
     permitFolioPlaceholder: "ex. 2026-0142",
     workDate: "Date des travaux",
+    endDate: "Date de fin",
     riskAnalysisExisting: "Analyse de risques existante (FAR/Fech N°)",
     riskAnalysisNumber: "Numéro FAR / Fech",
     sectionATitle: "A. Analyse des Risques de Chute",

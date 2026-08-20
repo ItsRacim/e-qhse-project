@@ -193,6 +193,7 @@ export const en = {
     permitFolio: "Permit No. / Folio",
     permitFolioPlaceholder: "e.g. 2026-0142",
     workDate: "Work date",
+    endDate: "End date",
     riskAnalysisExisting: "Existing risk analysis (FAR/Fech No.)",
     riskAnalysisNumber: "FAR / Fech number",
     sectionATitle: "A. Fall Risk Analysis",

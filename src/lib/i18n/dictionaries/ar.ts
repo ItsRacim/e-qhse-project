@@ -194,6 +194,7 @@ export const ar: Dictionary = {
     permitFolio: "رقم التصريح / الملف",
     permitFolioPlaceholder: "مثال: 2026-0142",
     workDate: "تاريخ الأعمال",
+    endDate: "تاريخ الانتهاء",
     riskAnalysisExisting: "تحليل المخاطر الحالي (FAR/Fech N°)",
     riskAnalysisNumber: "رقم FAR / Fech",
     sectionATitle: "أ: تحليل مخاطر السقوط",

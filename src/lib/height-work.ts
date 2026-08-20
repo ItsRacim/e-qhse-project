@@ -4,6 +4,7 @@ export type HeightWorkDetails = {
   description: string;
   permitFolio: string;
   workDate: string;
+  endDate: string;
   riskAnalysis: {
     existing: YesNo;
     farNumber: string;
@@ -49,6 +50,7 @@ export function emptyHeightWorkDetails(): HeightWorkDetails {
     description: "",
     permitFolio: "",
     workDate: "",
+    endDate: "",
     riskAnalysis: { existing: "", farNumber: "" },
     fallRisk: {
       eliminationAuSol: false,
