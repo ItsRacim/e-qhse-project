@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { parseCertifications } from "@/lib/employee";
 
+export const dynamic = "force-dynamic";
+
 const VALID_ROLES = ["WORKER", "SUPERVISOR", "INSPECTOR"];
 const CODE_PREFIX = "EQHSE-EMP-";
 

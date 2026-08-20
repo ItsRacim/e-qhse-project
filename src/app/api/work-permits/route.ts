@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const VALID_PERMIT_TYPES = [
   "HOT_WORK",
   "COLD_WORK",

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const priorityValues = ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
 
 export async function POST(request: Request) {
