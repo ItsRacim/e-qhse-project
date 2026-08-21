@@ -561,25 +561,6 @@ export default function HeightWorkPermitForm({
               placeholder={t("heightWork.namePlaceholder")}
               className={inputCls}
             />
-            <div className="mt-3">
-              <FieldLabel>{t("heightWork.signature")}</FieldLabel>
-              <SignaturePad
-                value={details.closing.chargeDesTravaux.signature}
-                onChange={(signature) =>
-                  update({
-                    ...details,
-                    closing: {
-                      ...details.closing,
-                      chargeDesTravaux: {
-                        ...details.closing.chargeDesTravaux,
-                        signature,
-                      },
-                    },
-                  })
-                }
-                height={72}
-              />
-            </div>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <p className="mb-2 text-sm font-medium text-slate-800">
@@ -603,25 +584,6 @@ export default function HeightWorkPermitForm({
               placeholder={t("heightWork.namePlaceholder")}
               className={inputCls}
             />
-            <div className="mt-3">
-              <FieldLabel>{t("heightWork.signature")}</FieldLabel>
-              <SignaturePad
-                value={details.closing.responsableSecurite.signature}
-                onChange={(signature) =>
-                  update({
-                    ...details,
-                    closing: {
-                      ...details.closing,
-                      responsableSecurite: {
-                        ...details.closing.responsableSecurite,
-                        signature,
-                      },
-                    },
-                  })
-                }
-                height={72}
-              />
-            </div>
           </div>
         </div>
       </SectionCard>
