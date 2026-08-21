@@ -7,7 +7,7 @@ import {
   type HeightWorkDetails,
   type YesNo,
 } from "@/lib/height-work";
-import { useLanguage } from "@/lib/i18n/language-context";
+import { useLanguage, type TranslationKey } from "@/lib/i18n/language-context";
 
 type SectionCardProps = {
   title: string;
@@ -200,7 +200,7 @@ export default function HeightWorkPermitForm({
       <SectionCard step="A" title={t("heightWork.sectionATitle")}>
         <YesNoField
           label={t("heightWork.eliminationAuSol")}
-          value={details.fallRisk.eliminationAuSol ? "oui" : ""}
+          value={details.fallRisk.eliminationAuSol ? "oui" : "non"}
           onChange={(value) =>
             update({
               ...details,
@@ -213,7 +213,7 @@ export default function HeightWorkPermitForm({
         />
         <YesNoField
           label={t("heightWork.protectionCollectiveFixe")}
-          value={details.fallRisk.protectionCollectiveFixe ? "oui" : ""}
+          value={details.fallRisk.protectionCollectiveFixe ? "oui" : "non"}
           onChange={(value) =>
             update({
               ...details,
@@ -226,7 +226,7 @@ export default function HeightWorkPermitForm({
         />
         <YesNoField
           label={t("heightWork.protectionCollectiveTemporaire")}
-          value={details.fallRisk.protectionCollectiveTemporaire ? "oui" : ""}
+          value={details.fallRisk.protectionCollectiveTemporaire ? "oui" : "non"}
           onChange={(value) =>
             update({
               ...details,
@@ -395,37 +395,39 @@ export default function HeightWorkPermitForm({
       </SectionCard>
 
       <SectionCard step="E" title={t("heightWork.sectionETitle")}>
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-700">
-            {t("heightWork.workersValidationStatus")}
-          </span>
-          <button
-            type="button"
-            onClick={() =>
-              update({
-                ...details,
-                workersValidated: !details.workersValidated,
-              })
-            }
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              details.workersValidated
-                ? "bg-green-100 border border-green-300 text-green-700 hover:bg-green-200"
-                : "bg-slate-100 border border-slate-300 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            {details.workersValidated ? (
-              <>
-                <CheckSquare className="h-4 w-4" />
-                {t("heightWork.workersValidated")}
-              </>
-            ) : (
-              <>
-                <XSquare className="h-4 w-4" />
-                {t("heightWork.validateAllWorkers")}
-              </>
-            )}
-          </button>
-        </div>
+        {details.personnel.length > 0 && (
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700">
+              {t("heightWork.workersValidationStatus")}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                update({
+                  ...details,
+                  workersValidated: !details.workersValidated,
+                })
+              }
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                details.workersValidated
+                  ? "bg-green-100 border border-green-300 text-green-700 hover:bg-green-200"
+                  : "bg-slate-100 border border-slate-300 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {details.workersValidated ? (
+                <>
+                  <CheckSquare className="h-4 w-4" />
+                  {t("heightWork.workersValidated")}
+                </>
+              ) : (
+                <>
+                  <XSquare className="h-4 w-4" />
+                  {t("heightWork.validateAllWorkers")}
+                </>
+              )}
+            </button>
+          </div>
+        )}
         <div className="overflow-x-auto rounded-lg border border-slate-200">
           <table className="w-full min-w-[680px] border-collapse text-sm">
             <thead>
@@ -607,4 +609,17 @@ export default function HeightWorkPermitForm({
       </SectionCard>
     </>
   );
+}
+
+export function validateHeightWorkDetails(
+  details: HeightWorkDetails,
+  t: (key: TranslationKey) => string
+): string | null {
+  if (details.personnel.length === 0) {
+    return t("heightWork.validationErrorNoPersonnel");
+  }
+  if (!details.workersValidated) {
+    return t("heightWork.validationErrorNotValidated");
+  }
+  return null;
 }

@@ -228,6 +228,8 @@ export const en = {
     workersValidationStatus: "Workers Validation Status",
     validateAllWorkers: "Validate All Workers",
     workersValidated: "Workers Validated",
+    validationErrorNoPersonnel: "At least one authorized worker must be added.",
+    validationErrorNotValidated: "Workers must be validated before saving.",
     signature: "Signature",
     signHere: "Sign here",
     clear: "Clear",

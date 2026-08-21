@@ -235,6 +235,8 @@ export const fr: Dictionary = {
     workersValidationStatus: "État de validation des travailleurs",
     validateAllWorkers: "Valider tous les travailleurs",
     workersValidated: "Travailleurs validés",
+    validationErrorNoPersonnel: "Au moins un travailleur autorisé doit être ajouté.",
+    validationErrorNotValidated: "Les travailleurs doivent être validés avant la sauvegarde.",
     signature: "Signature",
     signHere: "Signez ici",
     clear: "Effacer",

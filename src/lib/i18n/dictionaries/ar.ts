@@ -229,6 +229,8 @@ export const ar: Dictionary = {
     workersValidationStatus: "حالة التحقق من العمال",
     validateAllWorkers: "اعتماد جميع العمال",
     workersValidated: "تم اعتماد العمال",
+    validationErrorNoPersonnel: "يجب إضافة عامل مصرح به واحد على الأقل.",
+    validationErrorNotValidated: "يجب التحقق من العمال قبل الحفظ.",
     signature: "التوقيع",
     signHere: "وقّع هنا",
     clear: "مسح",

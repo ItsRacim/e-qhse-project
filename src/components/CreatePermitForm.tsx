@@ -21,6 +21,7 @@ import {
   emptyHeightWorkDetails,
   type HeightWorkDetails,
 } from "@/lib/height-work";
+import { validateHeightWorkDetails } from "@/components/HeightWorkPermitForm";
 import { useLanguage } from "@/lib/i18n/language-context";
 
 type ModalState = {
@@ -124,6 +125,13 @@ export default function CreatePermitForm({
     if (end.getTime() <= start.getTime()) {
       setFormError(t("workPermits.endDateAfterStartError"));
       return;
+    }
+    if (isHeightWork) {
+      const validationError = validateHeightWorkDetails(heightDetails, t);
+      if (validationError) {
+        setFormError(validationError);
+        return;
+      }
     }
 
     setSubmitting(true);
