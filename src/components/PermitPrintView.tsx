@@ -214,8 +214,15 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
       </div>
 
       <div className="mt-4">
-        <h4 className="border-b border-slate-300 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <h4 className="border-b border-slate-300 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 flex items-center justify-between">
           E. Authorized Personnel & Qualifications
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
+            details.workersValidated
+              ? "bg-green-100 text-green-700"
+              : "bg-slate-100 text-slate-600"
+          }`}>
+            {details.workersValidated ? "✓ Workers Validated" : "✗ Workers Not Validated"}
+          </span>
         </h4>
         {details.personnel.length === 0 ? (
           <p className="py-2 text-sm text-slate-400">No personnel added.</p>
@@ -226,7 +233,6 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
                 <th className="py-1 pr-2 font-semibold">Name</th>
                 <th className="py-1 pr-2 font-semibold">Harness N° / Year</th>
                 <th className="py-1 pr-2 font-semibold">Training date</th>
-                <th className="py-1 font-semibold">Validated</th>
               </tr>
             </thead>
             <tbody>
@@ -235,15 +241,6 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
                   <td className="py-1.5 pr-2 font-medium">{worker.name || "—"}</td>
                   <td className="py-1.5 pr-2">{worker.harnessSerial || "—"}</td>
                   <td className="py-1.5 pr-2">{worker.trainingDate || "—"}</td>
-                  <td className="py-1.5">
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
-                      worker.validated
-                        ? "bg-green-100 text-green-700"
-                        : "bg-slate-100 text-slate-600"
-                    }`}>
-                      {worker.validated ? "✓ Validated" : "✗ Not Validated"}
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>
