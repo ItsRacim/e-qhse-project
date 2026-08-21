@@ -37,11 +37,10 @@ export type HeightWorkDetails = {
     name: string;
     harnessSerial: string;
     trainingDate: string;
-    signature: string;
   }[];
   closing: {
-    chargeDesTravaux: { name: string; signature: string };
-    responsableSecurite: { name: string; signature: string };
+    chargeDesTravaux: { name: string };
+    responsableSecurite: { name: string };
   };
 };
 
@@ -78,8 +77,8 @@ export function emptyHeightWorkDetails(): HeightWorkDetails {
     },
     personnel: [],
     closing: {
-      chargeDesTravaux: { name: "", signature: "" },
-      responsableSecurite: { name: "", signature: "" },
+      chargeDesTravaux: { name: "" },
+      responsableSecurite: { name: "" },
     },
   };
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckSquare, Plus, Trash2, XSquare } from "lucide-react";
-import SignaturePad from "@/components/SignaturePad";
+
 import {
   emptyHeightWorkDetails,
   type HeightWorkDetails,
@@ -473,20 +473,6 @@ export default function HeightWorkPermitForm({
                         })
                       }
                       className={cellInputCls}
-                    />
-                  </td>
-                  <td className="px-3 py-2 align-top">
-                    <SignaturePad
-                      value={worker.signature}
-                      onChange={(signature) =>
-                        update({
-                          ...details,
-                          personnel: details.personnel.map((w, i) =>
-                            i === index ? { ...w, signature } : w
-                          ),
-                        })
-                      }
-                      height={56}
                     />
                   </td>
                   <td className="px-2 py-2 align-top">

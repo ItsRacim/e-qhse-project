@@ -226,7 +226,7 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
                 <th className="py-1 pr-2 font-semibold">Name</th>
                 <th className="py-1 pr-2 font-semibold">Harness N° / Year</th>
                 <th className="py-1 pr-2 font-semibold">Training date</th>
-                <th className="py-1 font-semibold">Signature</th>
+                <th className="py-1 font-semibold">—</th>
               </tr>
             </thead>
             <tbody>
@@ -236,16 +236,7 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
                   <td className="py-1.5 pr-2">{worker.harnessSerial || "—"}</td>
                   <td className="py-1.5 pr-2">{worker.trainingDate || "—"}</td>
                   <td className="py-1.5">
-                    {worker.signature ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={worker.signature}
-                        alt={`Signature ${index + 1}`}
-                        className="h-10 object-contain"
-                      />
-                    ) : (
-                      "—"
-                    )}
+                    —
                   </td>
                 </tr>
               ))}
@@ -254,20 +245,9 @@ function HeightWorkPrintSection({ details }: { details: HeightWorkDetails }) {
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <PrintSignature
-          title="Chargé des Travaux"
-          name={details.closing.chargeDesTravaux.name}
-          dataUrl={details.closing.chargeDesTravaux.signature}
-        />
-        <PrintSignature
-          title="Responsable Sécurité Secteur"
-          name={details.closing.responsableSecurite.name}
-          dataUrl={details.closing.responsableSecurite.signature}
-        />
       </div>
-    </section>
-  );
+      </section>
+    </>
 }
 
 export default async function PermitPrintView({
