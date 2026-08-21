@@ -1,8 +1,8 @@
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "../src/generated/prisma/client";
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
+const adapter = new PrismaBetterSqlite3({
+  url: process.env.DATABASE_URL,
 });
 const prisma = new PrismaClient({ adapter });
 
@@ -11,18 +11,8 @@ async function main() {
   await prisma.report.deleteMany();
   await prisma.employee.deleteMany();
 
-  const ahmad = await prisma.employee.upsert({
-    where: { pinCode: "1001" },
-    update: {
-      name: "Ahmad Rahman",
-      position: "Safety Officer",
-      department: "HSE",
-      qrCodeData: "EQHSE-EMP-0001",
-      certifications: "NEBOSH IGC,First Aid & CPR",
-      role: "SUPERVISOR",
-      status: "ACTIVE",
-    },
-    create: {
+  const ahmad = await prisma.employee.create({
+    data: {
       name: "Ahmad Rahman",
       position: "Safety Officer",
       department: "HSE",
@@ -34,18 +24,8 @@ async function main() {
     },
   });
 
-  const maria = await prisma.employee.upsert({
-    where: { pinCode: "1002" },
-    update: {
-      name: "Maria Santos",
-      position: "Production Supervisor",
-      department: "Production",
-      qrCodeData: "EQHSE-EMP-0002",
-      certifications: "ISO 45001 Lead Auditor,Confined Space Entry",
-      role: "INSPECTOR",
-      status: "ACTIVE",
-    },
-    create: {
+  const maria = await prisma.employee.create({
+    data: {
       name: "Maria Santos",
       position: "Production Supervisor",
       department: "Production",
@@ -57,18 +37,8 @@ async function main() {
     },
   });
 
-  const david = await prisma.employee.upsert({
-    where: { pinCode: "1003" },
-    update: {
-      name: "David Chen",
-      position: "Maintenance Technician",
-      department: "Maintenance",
-      qrCodeData: "EQHSE-EMP-0003",
-      certifications: "Working at Height,LOTO",
-      role: "WORKER",
-      status: "ON_LEAVE",
-    },
-    create: {
+  const david = await prisma.employee.create({
+    data: {
       name: "David Chen",
       position: "Maintenance Technician",
       department: "Maintenance",
@@ -156,7 +126,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.dir(e, { depth: null });
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {
