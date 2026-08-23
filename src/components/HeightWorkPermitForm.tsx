@@ -53,7 +53,7 @@ function YesNoField({ label, value, onChange }: YesNoFieldProps) {
           <button
             key={option}
             type="button"
-            onClick={() => onChange(value === option ? "" : option)}
+            onClick={() => onChange(option)}
             className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
               value === option
                 ? "border-orange-500 bg-orange-50 font-semibold text-orange-700"
@@ -396,10 +396,23 @@ export default function HeightWorkPermitForm({
 
       <SectionCard step="E" title={t("heightWork.sectionETitle")}>
         {details.personnel.length > 0 && (
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700">
-              {t("heightWork.workersValidationStatus")}
-            </span>
+          <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-sm font-medium text-slate-700">
+                {t("heightWork.workersValidationStatus")}
+              </span>
+              {details.workersValidated ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  {t("heightWork.workersValidatedBadge", { count: details.personnel.length })}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                  {t("heightWork.workersPendingBadge", { count: details.personnel.length })}
+                </span>
+              )}
+            </div>
             <button
               type="button"
               onClick={() =>
@@ -615,11 +628,8 @@ export function validateHeightWorkDetails(
   details: HeightWorkDetails,
   t: (key: TranslationKey) => string
 ): string | null {
-  if (details.personnel.length === 0) {
-    return t("heightWork.validationErrorNoPersonnel");
-  }
-  if (!details.workersValidated) {
-    return t("heightWork.validationErrorNotValidated");
+  if (details.personnel.length === 0 || !details.workersValidated) {
+    return t("heightWork.validationErrorPersonnelAndValidation");
   }
   return null;
 }
