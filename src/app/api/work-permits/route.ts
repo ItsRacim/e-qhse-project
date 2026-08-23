@@ -94,7 +94,7 @@ export async function POST(request: Request) {
         startDate,
         endDate,
         type: "PERMIT",
-        status: "SUBMITTED",
+        status: "DRAFT",
         createdById: applicantId,
         authorizedWorkers: { connect: workerIds.map((id) => ({ id })) },
       },

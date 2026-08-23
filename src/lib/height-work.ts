@@ -1,5 +1,7 @@
 export type YesNo = "" | "oui" | "non";
 
+export type PermitStatus = "DRAFT" | "PENDING_APPROVAL" | "APPROVED" | "REJECTED";
+
 export type HeightWorkDetails = {
   description: string;
   permitFolio: string;
@@ -43,6 +45,7 @@ export type HeightWorkDetails = {
     chargeDesTravaux: { name: string; signature?: string };
     responsableSecurite: { name: string; signature?: string };
   };
+  status: PermitStatus;
 };
 
 export function emptyHeightWorkDetails(): HeightWorkDetails {
@@ -82,6 +85,7 @@ export function emptyHeightWorkDetails(): HeightWorkDetails {
       chargeDesTravaux: { name: "" },
       responsableSecurite: { name: "" },
     },
+    status: "DRAFT",
   };
 }
 

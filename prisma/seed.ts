@@ -66,7 +66,7 @@ async function main() {
         type: "DAILY",
         content:
           "Inspected forklift charging station and racking. Found one minor oil leak near bay 4; corrective action raised.",
-        status: "SUBMITTED",
+        status: "PENDING_APPROVAL",
         createdById: maria.id,
       },
     ],

@@ -20,6 +20,7 @@ import {
   TimerReset,
   X,
   Zap,
+  Filter,
 } from "lucide-react";
 import Badge from "@/components/Badge";
 import PageHeader from "@/components/PageHeader";
@@ -65,6 +66,8 @@ type Permit = {
   permitType: string | null;
   status: string;
   approvedHash: string | null;
+  approvedAt: string | null;
+  rejectionReason: string | null;
   createdAt: string;
   startDate: string | null;
   endDate: string | null;
@@ -123,6 +126,7 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
   const [extending, setExtending] = useState<Permit | null>(null);
   const [newEndDate, setNewEndDate] = useState("");
   const [extReason, setExtReason] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const dateLocale =
     language === "ar" ? "ar" : language === "fr" ? "fr-FR" : "en-GB";
@@ -137,6 +141,15 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
       ? "workPermits.extendApproverDescription"
       : "workPermits.approveDescription"
   );
+
+  const filteredPermits = permits.filter((permit) => {
+    if (statusFilter === "all") return true;
+    const status = effectiveStatus(permit);
+    if (statusFilter === "pending") return status === "PENDING_APPROVAL";
+    if (statusFilter === "approved") return status === "APPROVED";
+    if (statusFilter === "draft") return status === "DRAFT";
+    return true;
+  });
 
   function handleVerified(employee: SafeEmployee) {
     if (modal?.mode === "approve" && modal.permitId) {
@@ -230,10 +243,25 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
 
   return (
     <>
-      <PageHeader
-        title={t("workPermits.title")}
-        description={t("workPermits.description")}
-      />
+      <div className="mb-4 flex items-center justify-between">
+        <PageHeader
+          title={t("workPermits.title")}
+          description={t("workPermits.description")}
+        />
+        <div className="relative">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="appearance-none w-48 rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="all">{t("workPermits.filterAll")}</option>
+            <option value="pending">{t("workPermits.filterPending")}</option>
+            <option value="approved">{t("workPermits.filterApproved")}</option>
+            <option value="draft">{t("workPermits.filterDraft")}</option>
+          </select>
+          <Filter className="absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        </div>
+      </div>
       {success && (
         <div className="mb-6 flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -296,22 +324,27 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
       </div>
 
       <div className="mt-6 space-y-4">
-        {permits.length === 0 && (
+        {filteredPermits.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface px-6 py-16 text-center">
             <MapPin className="h-8 w-8 text-muted" />
             <p className="mt-2 text-sm text-muted">{t("workPermits.noPermits")}</p>
           </div>
         )}
 
-        {permits.map((permit) => {
+        {filteredPermits.map((permit) => {
           const status = effectiveStatus(permit);
           const end = effectiveEnd(permit);
           const isActive = permit.status === "APPROVED" || permit.status === "ACTIVE";
           const expiring = isExpiringSoon(permit);
+          const isPending = permit.status === "PENDING_APPROVAL";
           return (
             <div
               key={permit.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className={`rounded-xl border p-5 transition-all ${
+                isPending
+                  ? "border-amber-400 bg-amber-50/30 shadow-amber-200/20"
+                  : "border-border bg-surface"
+              }`}
             >
               {expiring && (
                 <div className="mb-3 flex items-center gap-2 rounded-lg border border-orange-500/40 bg-orange-500/10 px-3 py-2 text-xs font-medium text-orange-700 dark:text-orange-400">

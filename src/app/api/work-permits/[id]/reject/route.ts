@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -12,10 +11,18 @@ export async function POST(
     const body = await request.json();
     const approverId =
       typeof body?.approverId === "string" ? body.approverId : "";
+    const rejectionReason =
+      typeof body?.rejectionReason === "string" ? body.rejectionReason.trim() : "";
 
     if (!approverId) {
       return NextResponse.json(
         { error: "approverId is required" },
+        { status: 400 }
+      );
+    }
+    if (!rejectionReason) {
+      return NextResponse.json(
+        { error: "rejectionReason is required" },
         { status: 400 }
       );
     }
@@ -29,7 +36,7 @@ export async function POST(
 
     if (approver.role !== "SUPERVISOR" && approver.role !== "INSPECTOR") {
       return NextResponse.json(
-        { error: "Only a Supervisor or Inspector can approve work permits" },
+        { error: "Only a Supervisor or Inspector can reject work permits" },
         { status: 403 }
       );
     }
@@ -39,31 +46,27 @@ export async function POST(
       return NextResponse.json({ error: "Work permit not found" }, { status: 404 });
     }
 
-    if (permit.status === "APPROVED") {
+    if (permit.status === "REJECTED") {
       return NextResponse.json(
-        { error: "Work permit is already approved" },
+        { error: "Work permit is already rejected" },
         { status: 409 }
       );
     }
 
     if (permit.status !== "PENDING_APPROVAL") {
       return NextResponse.json(
-        { error: "Only pending approval permits can be approved" },
+        { error: "Only pending approval permits can be rejected" },
         { status: 409 }
       );
     }
 
-    const approvedHash = createHash("sha256")
-      .update(`${permit.id}:${approverId}:${Date.now()}`)
-      .digest("hex");
-
     const updated = await prisma.report.update({
       where: { id: permit.id },
       data: {
-        status: "APPROVED",
+        status: "REJECTED",
         approvedById: approverId,
-        approvedHash,
         approvedAt: new Date(),
+        rejectionReason,
       },
       include: {
         createdBy: { select: { id: true, name: true, position: true, role: true } },
@@ -77,7 +80,7 @@ export async function POST(
     return NextResponse.json({ permit: updated });
   } catch {
     return NextResponse.json(
-      { error: "Failed to approve work permit" },
+      { error: "Failed to reject work permit" },
       { status: 500 }
     );
   }

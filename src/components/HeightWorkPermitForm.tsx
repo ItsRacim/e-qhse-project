@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { CheckSquare, Plus, Trash2, XSquare } from "lucide-react";
+import { CheckSquare, Plus, Trash2, XSquare, Lock, CheckCircle2, XCircle, AlertCircle, X } from "lucide-react";
 import {
   emptyHeightWorkDetails,
   type HeightWorkDetails,
   type YesNo,
+  type PermitStatus,
 } from "@/lib/height-work";
 import { useLanguage, type TranslationKey } from "@/lib/i18n/language-context";
 
@@ -97,15 +98,32 @@ function CheckField({ label, checked, onChange }: CheckFieldProps) {
 
 type HeightWorkPermitFormProps = {
   onChange: (details: HeightWorkDetails) => void;
+  status: PermitStatus;
+  approvedByName?: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  onApprove?: (approverName: string) => Promise<void>;
+  onReject?: (reason: string) => Promise<void>;
+  isQhseEngineer?: boolean;
 };
 
 export default function HeightWorkPermitForm({
   onChange,
+  status,
+  approvedByName,
+  approvedAt,
+  rejectionReason,
+  onApprove,
+  onReject,
+  isQhseEngineer,
 }: HeightWorkPermitFormProps) {
   const { t } = useLanguage();
   const [details, setDetails] = useState<HeightWorkDetails>(
     emptyHeightWorkDetails()
   );
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function update(next: HeightWorkDetails) {
     setDetails(next);
@@ -116,11 +134,204 @@ export default function HeightWorkPermitForm({
     update({ ...details, [key]: value });
   }
 
-  const inputCls =
-    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500";
+  const isReadOnly = status === "PENDING_APPROVAL" || status === "APPROVED";
+
+  const statusBadgeClasses: Record<PermitStatus, string> = {
+    DRAFT: "bg-slate-100 text-slate-700",
+    PENDING_APPROVAL: "bg-amber-100 text-amber-700",
+    APPROVED: "bg-emerald-100 text-emerald-700",
+    REJECTED: "bg-rose-100 text-rose-700",
+  };
+
+  const statusLabels: Record<PermitStatus, string> = {
+    DRAFT: t("workPermits.statusDraft"),
+    PENDING_APPROVAL: t("workPermits.statusPendingApproval"),
+    APPROVED: t("workPermits.statusApproved"),
+    REJECTED: t("workPermits.statusRejected"),
+  };
+
+  const inputCls = `w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500 ${
+    isReadOnly ? "bg-slate-50 cursor-not-allowed" : "bg-white"
+  }`;
+
+  const handleApprove = async () => {
+    if (!onApprove) return;
+    setIsSubmitting(true);
+    try {
+      await onApprove("Ingénieur QHSE");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!onReject || !rejectReason.trim()) return;
+    setIsSubmitting(true);
+    try {
+      await onReject(rejectReason.trim());
+      setShowRejectModal(false);
+      setRejectReason("");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "";
+    try {
+      return new Date(dateStr).toLocaleString();
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <>
+      <div className="mb-4 flex items-center gap-3 flex-wrap">
+        <span className="text-xs font-medium text-slate-500">
+          {t("workPermits.statusLabel")}
+        </span>
+        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadgeClasses[status]}`}>
+          {statusLabels[status]}
+        </span>
+        {isReadOnly && (
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+            <Lock className="h-3 w-3" />
+            {t("workPermits.formLocked")}
+          </span>
+        )}
+      </div>
+
+      {/* Approval Audit Metadata Banner */}
+      {status === "APPROVED" && approvedByName && (
+        <div className="mb-4 flex items-center gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-emerald-800">
+              {t("workPermits.approvedByBadge", { name: approvedByName, date: formatDate(approvedAt) })}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {status === "REJECTED" && rejectionReason && (
+        <div className="mb-4 flex items-start gap-3 p-3 rounded-lg bg-rose-50 border border-rose-200">
+          <XCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-rose-800">
+              {t("workPermits.rejectedByBadge", { reason: rejectionReason })}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* QHSE Review Action Box for PENDING_APPROVAL */}
+      {status === "PENDING_APPROVAL" && isQhseEngineer && (
+        <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200">
+          <div className="flex items-start gap-3 mb-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-amber-800">
+                {t("workPermits.qhseReviewRequired")}
+              </h4>
+              <p className="mt-1 text-xs text-amber-700">
+                {t("workPermits.qhseReviewDescription")}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={handleApprove}
+              disabled={isSubmitting}
+              className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                  {t("common.loading")}
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  {t("workPermits.approveButton")}
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowRejectModal(true)}
+              disabled={isSubmitting}
+              className="flex items-center gap-2 rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50"
+            >
+              <XCircle className="h-4 w-4" />
+              {t("workPermits.rejectButton")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold">
+                  {t("workPermits.rejectTitle")}
+                </h3>
+                <p className="mt-1 text-sm text-muted">
+                  {t("workPermits.rejectDescription")}
+                </p>
+              </div>
+              <button
+                onClick={() => { setShowRejectModal(false); setRejectReason(""); }}
+                aria-label={t("common.close")}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-slate-500/10 hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <label className="mb-1 block text-xs font-medium text-slate-500">
+                {t("workPermits.rejectReasonLabel")} <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                rows={4}
+                placeholder={t("workPermits.rejectReasonPlaceholder")}
+                className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => { setShowRejectModal(false); setRejectReason(""); }}
+                className="flex-1 rounded-lg border border-border py-2 text-sm font-medium text-foreground transition-colors hover:border-orange-500"
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={isSubmitting || !rejectReason.trim()}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-rose-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                ) : (
+                  <>
+                    <XCircle className="h-4 w-4" />
+                    {t("workPermits.rejectConfirm")}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SectionCard step="1" title={t("heightWork.generalTitle")}>
         <div>
           <FieldLabel>{t("heightWork.descriptionLabel")}</FieldLabel>

@@ -18,7 +18,7 @@ async function getDashboardData() {
         where: { type: "PERMIT", status: "APPROVED" },
       }),
       prisma.report.count({
-        where: { type: "PERMIT", status: "SUBMITTED" },
+        where: { type: "PERMIT", status: "PENDING_APPROVAL" },
       }),
       prisma.correctiveAction.count({
         where: { status: { in: ["OPEN", "IN_PROGRESS"] } },

@@ -56,9 +56,9 @@ export async function POST(
       );
     }
 
-    if (permit.status !== "APPROVED" && permit.status !== "ACTIVE") {
+    if (permit.status !== "APPROVED") {
       return NextResponse.json(
-        { error: "Only an active work permit can be extended" },
+        { error: "Only an approved work permit can be extended" },
         { status: 409 }
       );
     }

@@ -23,6 +23,8 @@ async function getPermits() {
       startDate: permit.startDate?.toISOString() ?? null,
       endDate: permit.endDate?.toISOString() ?? null,
       extendedUntil: permit.extendedUntil?.toISOString() ?? null,
+      approvedAt: permit.approvedAt?.toISOString() ?? null,
+      rejectionReason: permit.rejectionReason ?? null,
     }));
   } catch {
     return [];

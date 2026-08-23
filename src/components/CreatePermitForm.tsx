@@ -275,7 +275,7 @@ export default function CreatePermitForm({
           </div>
         </div>
 
-        {isHeightWork && <HeightWorkPermitForm onChange={setHeightDetails} />}
+        {isHeightWork && <HeightWorkPermitForm onChange={setHeightDetails} status="DRAFT" />}
 
         <div className="mt-4">
           <label className="mb-1 block text-xs font-medium text-slate-500">
