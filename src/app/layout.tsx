@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import PwaRegister from "@/components/PwaRegister";
 import { LanguageProvider } from "@/lib/i18n/language-context";
+import { RoleProvider } from "@/lib/i18n/role-context";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -59,6 +60,15 @@ const languageInitScript = `
 })();
 `;
 
+const roleInitScript = `
+(function () {
+  try {
+    var role = localStorage.getItem("eqhse-active-role") || "SUPERVISOR";
+    localStorage.setItem("eqhse-active-role", role);
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,12 +79,15 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: languageInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: roleInitScript }} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         <LanguageProvider>
-          {children}
+          <RoleProvider>
+            {children}
+          </RoleProvider>
           <PwaRegister />
         </LanguageProvider>
       </body>

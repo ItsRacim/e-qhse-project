@@ -9,6 +9,7 @@ import {
   type PermitStatus,
 } from "@/lib/height-work";
 import { useLanguage, type TranslationKey } from "@/lib/i18n/language-context";
+import { useRole } from "@/lib/i18n/role-context";
 
 type SectionCardProps = {
   title: string;
@@ -104,7 +105,6 @@ type HeightWorkPermitFormProps = {
   rejectionReason?: string;
   onApprove?: (approverName: string) => Promise<void>;
   onReject?: (reason: string) => Promise<void>;
-  isQhseEngineer?: boolean;
 };
 
 export default function HeightWorkPermitForm({
@@ -115,9 +115,9 @@ export default function HeightWorkPermitForm({
   rejectionReason,
   onApprove,
   onReject,
-  isQhseEngineer,
 }: HeightWorkPermitFormProps) {
   const { t } = useLanguage();
+  const { role } = useRole();
   const [details, setDetails] = useState<HeightWorkDetails>(
     emptyHeightWorkDetails()
   );
@@ -134,7 +134,10 @@ export default function HeightWorkPermitForm({
     update({ ...details, [key]: value });
   }
 
-  const isReadOnly = status === "PENDING_APPROVAL" || status === "APPROVED";
+  const isQhseEngineer = role === "QHSE_ENGINEER";
+
+  // RBAC: Form is read-only for QHSE_ENGINEER always, and for SUPERVISOR when pending/approved
+  const isReadOnly = isQhseEngineer || status === "PENDING_APPROVAL" || status === "APPROVED";
 
   const statusBadgeClasses: Record<PermitStatus, string> = {
     DRAFT: "bg-slate-100 text-slate-700",
@@ -225,7 +228,7 @@ export default function HeightWorkPermitForm({
         </div>
       )}
 
-      {/* QHSE Review Action Box for PENDING_APPROVAL */}
+      {/* QHSE Review Action Box for PENDING_APPROVAL - Only for QHSE Engineer */}
       {status === "PENDING_APPROVAL" && isQhseEngineer && (
         <div className="mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200">
           <div className="flex items-start gap-3 mb-3">

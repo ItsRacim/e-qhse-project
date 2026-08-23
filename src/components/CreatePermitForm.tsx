@@ -28,6 +28,8 @@ type ModalState = {
   mode: "applicant" | "worker";
 } | null;
 
+const LOCAL_STORAGE_KEY = "eqhse-permits-store";
+
 const inputCls =
   "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500";
 
@@ -156,6 +158,32 @@ export default function CreatePermitForm({
         setFormError(data.error ?? t("workPermits.submitFailed"));
         return;
       }
+
+      if (typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+          const permits = stored ? JSON.parse(stored) : [];
+          const newPermit = {
+            id: data.permit?.id ?? `local-${Date.now()}`,
+            title,
+            type: "PERMIT",
+            permitType,
+            content,
+            status: "DRAFT",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            createdByName: applicant.name,
+            approvedByName: null,
+            approvedByRole: null,
+            approvedHash: null,
+            workerCount: workers.length,
+          };
+          permits.unshift(newPermit);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(permits));
+        } catch {
+        }
+      }
+
       setSuccess(true);
       router.refresh();
     } catch {

@@ -21,6 +21,8 @@ import {
   X,
   Zap,
   Filter,
+  AlertCircle,
+  Hash,
 } from "lucide-react";
 import Badge from "@/components/Badge";
 import PageHeader from "@/components/PageHeader";
@@ -28,6 +30,7 @@ import QuickAuthModal from "@/components/QuickAuthModal";
 import { permitTypeVariant, reportStatusVariant } from "@/lib/badges";
 import type { SafeEmployee } from "@/lib/employee";
 import { useLanguage } from "@/lib/i18n/language-context";
+import { useRole } from "@/lib/i18n/role-context";
 
 const permitTypes = [
   "HOT_WORK",
@@ -66,6 +69,7 @@ type Permit = {
   permitType: string | null;
   status: string;
   approvedHash: string | null;
+  auditHash: string | null;
   approvedAt: string | null;
   rejectionReason: string | null;
   createdAt: string;
@@ -119,6 +123,7 @@ function isExpiringSoon(permit: Permit): boolean {
 export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
   const router = useRouter();
   const { t, tEnum, language } = useLanguage();
+  const { role } = useRole();
   const [modal, setModal] = useState<ModalState>(null);
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -130,6 +135,8 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
 
   const dateLocale =
     language === "ar" ? "ar" : language === "fr" ? "fr-FR" : "en-GB";
+
+  const isSupervisor = role === "SUPERVISOR";
 
   const authTitle = t(
     modal?.mode === "extend"
@@ -440,7 +447,23 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
                 </code>
               )}
 
-              {permit.status === "SUBMITTED" && (
+              {/* Audit Hash Badge for APPROVED permits */}
+              {permit.status === "APPROVED" && permit.auditHash && (
+                <div className="mt-3 flex items-center gap-2 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <Hash className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-xs text-emerald-800 font-medium">
+                      {t("workPermits.verifiedSafetySeal")}
+                    </p>
+                    <code className="text-xs font-mono text-emerald-700">
+                      {permit.auditHash.substring(0, 10)}...{permit.auditHash.substring(permit.auditHash.length - 6)}
+                    </code>
+                  </div>
+                </div>
+              )}
+
+              {/* SUPERVISOR: Can approve SUBMITTED permits */}
+              {isSupervisor && permit.status === "SUBMITTED" && (
                 <button
                   onClick={() =>
                     setModal({ mode: "approve", permitId: permit.id })
@@ -454,6 +477,26 @@ export default function WorkPermitClient({ permits }: { permits: Permit[] }) {
                     <>
                       <ShieldCheck className="h-4 w-4" />
                       {t("workPermits.approveButton")}
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* SUPERVISOR: Can resubmit REJECTED permits */}
+              {isSupervisor && permit.status === "REJECTED" && (
+                <button
+                  onClick={() =>
+                    setModal({ mode: "approve", permitId: permit.id })
+                  }
+                  disabled={approvingId === permit.id}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
+                >
+                  {approvingId === permit.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <AlertCircle className="h-4 w-4" />
+                      {t("workPermits.resubmitButton")}
                     </>
                   )}
                 </button>

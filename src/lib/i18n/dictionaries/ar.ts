@@ -14,6 +14,10 @@ export const ar: Dictionary = {
     actionItems: "إجراءات التصحيح",
     qrScanner: "ماسح QR",
   },
+  roles: {
+    supervisor: "مشرف",
+    qhseEngineer: "مهندس QHSE",
+  },
   theme: { toggle: "تبديل المظهر" },
   language: { toggle: "تغيير اللغة" },
   common: {
@@ -51,6 +55,8 @@ export const ar: Dictionary = {
     originalTimestamp: "الطابع الزمني الأصلي",
     approvalHash: "رمز الموافقة",
     requiredRole: "الدور المطلوب: {roles}",
+    logout: "تسجيل الخروج",
+    language: "اللغة",
   },
   dashboard: {
     title: "لوحة التحكم",
@@ -86,6 +92,14 @@ export const ar: Dictionary = {
     verifyFailed: "فشل التحقق. حاول مرة أخرى.",
     roleNotPermitted: "الدور غير مسموح به. مطلوب: {roles}",
     close: "إغلاق",
+  },
+  login: {
+    subtitle: "حدد دورك للوصول إلى المنصة",
+    supervisor: "تسجيل الدخول كمشرف",
+    supervisorDesc: "إنشاء وإدارة تصاريح العمل، إرسالها للموافقة",
+    qhseEngineer: "تسجيل الدخول كمهندس QHSE",
+    qhseEngineerDesc: "مراجعة واعتماد التصاريح، عرض جميع مقاييس السلامة",
+    demoNotice: "وضع تجريبي — لا حاجة لبيانات اعتماد",
   },
   workPermits: {
     title: "تصاريح العمل",
@@ -210,10 +224,12 @@ export const ar: Dictionary = {
     rejectedByBadge: "تم الرفض: {reason}",
     qhseReviewRequired: "مراجعة مهندس QHSE مطلوبة",
     qhseReviewDescription: "هذا التصريح في انتظار الموافقة. بصفتك مهندس QHSE، يمكنك الموافقة أو رفض هذا التصريح.",
-    filterAll: "الكل",
-    filterPending: "在等待审查",
-    filterApproved: "已批准",
-    filterDraft: "草稿",
+filterAll: "الكل",
+    filterPending: "في انتظار المراجعة",
+    filterApproved: "معتمد",
+    filterDraft: "مسودات",
+    verifiedSafetySeal: "ختم الأمان المعتمد",
+    resubmitButton: "إعادة إرسال للموافقة",
   },
   heightWork: {
     yes: "نعم",

@@ -14,6 +14,10 @@ export const fr: Dictionary = {
     actionItems: "Actions correctives",
     qrScanner: "Scanner QR",
   },
+  roles: {
+    supervisor: "Superviseur",
+    qhseEngineer: "Ingénieur QHSE",
+  },
   theme: { toggle: "Basculer le thème" },
   language: { toggle: "Changer la langue" },
   common: {
@@ -51,6 +55,8 @@ export const fr: Dictionary = {
     originalTimestamp: "Horodatage d'origine",
     approvalHash: "Empreinte d'approbation",
     requiredRole: "Rôle requis : {roles}",
+    logout: "Se déconnecter",
+    language: "Langue",
   },
   dashboard: {
     title: "Tableau de bord",
@@ -87,6 +93,14 @@ export const fr: Dictionary = {
     verifyFailed: "Échec de la vérification. Réessayez.",
     roleNotPermitted: "Rôle non autorisé. Un {roles} est requis.",
     close: "Fermer",
+  },
+  login: {
+    subtitle: "Sélectionnez votre rôle pour accéder à la plateforme",
+    supervisor: "Se connecter comme Superviseur",
+    supervisorDesc: "Créer et gérer les permis de travail, soumettre pour approbation",
+    qhseEngineer: "Se connecter comme Ingénieur QHSE",
+    qhseEngineerDesc: "Examiner et approuver les permis, voir toutes les métriques de sécurité",
+    demoNotice: "Mode démo — Aucun identifiant requis",
   },
   workPermits: {
     title: "Permis de travail",
@@ -220,6 +234,8 @@ export const fr: Dictionary = {
     filterPending: "En attente de révision",
     filterApproved: "Approuvés",
     filterDraft: "Brouillons",
+    verifiedSafetySeal: "Sceau de sécurité vérifié",
+    resubmitButton: "Ressoumettre pour approbation",
   },
   heightWork: {
     yes: "Oui",

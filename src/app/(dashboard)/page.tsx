@@ -3,6 +3,34 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+const LOCAL_STORAGE_KEY = "eqhse-permits-store";
+
+interface LocalPermit {
+  id: string;
+  title: string;
+  type: string;
+  permitType: string | null;
+  content: string;
+  status: string;
+  createdAt: string;
+  updatedAt?: string;
+  createdByName: string | null;
+  approvedByName: string | null;
+  approvedByRole: string | null;
+  approvedHash: string | null;
+  workerCount: number;
+}
+
+function getLocalPermits(): LocalPermit[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
 async function getDashboardData() {
   try {
     const [
@@ -69,13 +97,39 @@ async function getDashboardData() {
       dbError: false,
     };
   } catch {
+    const localPermits = getLocalPermits();
+    const approvedPermits = localPermits.filter((p) => p.status === "APPROVED");
+    const pendingPermits = localPermits.filter((p) => p.status === "PENDING_APPROVAL");
+    const recentLocal = localPermits
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
     return {
       employeeCount: 0,
-      activePermits: 0,
-      pendingApprovals: 0,
+      activePermits: approvedPermits.length,
+      pendingApprovals: pendingPermits.length,
       openActions: 0,
-      recentSigned: [],
-      recentReports: [],
+      recentSigned: approvedPermits.slice(0, 6).map((permit) => ({
+        id: permit.id,
+        title: permit.title,
+        type: permit.type,
+        permitType: permit.permitType,
+        status: permit.status,
+        approvedHash: permit.approvedHash,
+        updatedAt: permit.updatedAt || permit.createdAt,
+        approvedByName: permit.approvedByName ?? null,
+        approvedByRole: permit.approvedByRole ?? null,
+        workerCount: permit.workerCount ?? 0,
+      })),
+      recentReports: recentLocal.map((report) => ({
+        id: report.id,
+        title: report.title,
+        type: report.type,
+        permitType: report.permitType,
+        status: report.status,
+        createdAt: report.createdAt,
+        createdByName: report.createdByName ?? null,
+      })),
       dbError: true,
     };
   }

@@ -46,13 +46,19 @@ export async function POST(
       );
     }
 
-    if (permit.status !== "PENDING_APPROVAL") {
+    if (permit.status !== "PENDING_APPROVAL" && permit.status !== "SUBMITTED") {
       return NextResponse.json(
-        { error: "Only pending approval permits can be approved" },
+        { error: "Only pending approval or submitted permits can be approved" },
         { status: 409 }
       );
     }
 
+    // Generate comprehensive cryptographic audit hash for blockchain readiness
+    // Includes permitId, approverId, approverName, approvedAt, and core safety checks from details
+    const approvedAt = new Date().toISOString();
+    const safetyChecksPayload = permit.details ?? "";
+    const auditHashInput = `${permit.id}:${approverId}:${approver.name}:${approvedAt}:${safetyChecksPayload}`;
+    const auditHash = createHash("sha256").update(auditHashInput).digest("hex");
     const approvedHash = createHash("sha256")
       .update(`${permit.id}:${approverId}:${Date.now()}`)
       .digest("hex");
@@ -63,6 +69,7 @@ export async function POST(
         status: "APPROVED",
         approvedById: approverId,
         approvedHash,
+        auditHash,
         approvedAt: new Date(),
       },
       include: {

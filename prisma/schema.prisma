@@ -51,6 +51,7 @@ model Report {
   extensionCount   Int          @default(0)
   status           PermitStatus @default(DRAFT)
   approvedHash     String?      @unique
+  auditHash        String?      @unique
   approvedAt       DateTime?
   rejectionReason  String?
   createdAt        DateTime     @default(now())

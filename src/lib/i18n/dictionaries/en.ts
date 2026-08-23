@@ -12,6 +12,10 @@ export const en = {
     actionItems: "Action Items",
     qrScanner: "QR Scanner",
   },
+  roles: {
+    supervisor: "Supervisor",
+    qhseEngineer: "QHSE Engineer",
+  },
   theme: { toggle: "Toggle theme" },
   language: { toggle: "Change language" },
   common: {
@@ -49,6 +53,8 @@ export const en = {
     originalTimestamp: "Original Timestamp",
     approvalHash: "Approval Hash",
     requiredRole: "Required role: {roles}",
+    logout: "Log out",
+    language: "Language",
   },
   dashboard: {
     title: "Dashboard",
@@ -84,6 +90,14 @@ export const en = {
     verifyFailed: "Verification failed. Try again.",
     roleNotPermitted: "Role not permitted. A {roles} is required.",
     close: "Close",
+  },
+  login: {
+    subtitle: "Select your role to access the platform",
+    supervisor: "Login as Supervisor",
+    supervisorDesc: "Create and manage work permits, submit for approval",
+    qhseEngineer: "Login as QHSE Engineer",
+    qhseEngineerDesc: "Review and approve permits, view all safety metrics",
+    demoNotice: "Demo mode — No credentials required",
   },
   workPermits: {
     title: "Work Permits",
@@ -213,6 +227,8 @@ export const en = {
     filterPending: "Pending Review",
     filterApproved: "Approved",
     filterDraft: "Drafts",
+    verifiedSafetySeal: "Verified Safety Seal",
+    resubmitButton: "Resubmit for Approval",
   },
   heightWork: {
     yes: "Yes",
