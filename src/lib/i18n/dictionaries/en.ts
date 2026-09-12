@@ -15,6 +15,11 @@ export const en = {
   roles: {
     supervisor: "Supervisor",
     qhseEngineer: "QHSE Engineer",
+    responsableHse: "Responsable HSE",
+    superviseurHse: "Superviseur HSE",
+    drh: "DRH",
+    responsableCommercial: "Responsable Commercial",
+    ingenieurQhse: "Ingénieur QHSE",
   },
   theme: { toggle: "Toggle theme" },
   language: { toggle: "Change language" },
@@ -55,6 +60,9 @@ export const en = {
     requiredRole: "Required role: {roles}",
     logout: "Log out",
     language: "Language",
+    email: "Email",
+    password: "Password",
+    fullName: "Full Name",
   },
   dashboard: {
     title: "Dashboard",
@@ -91,12 +99,15 @@ export const en = {
     roleNotPermitted: "Role not permitted. A {roles} is required.",
     close: "Close",
   },
-  login: {
+login: {
     subtitle: "Select your role to access the platform",
     supervisor: "Login as Supervisor",
     supervisorDesc: "Create and manage work permits, submit for approval",
     qhseEngineer: "Login as QHSE Engineer",
     qhseEngineerDesc: "Review and approve permits, view all safety metrics",
+    signin: "Sign In",
+    signup: "Sign Up",
+    jobPosition: "Job Position",
     demoNotice: "Demo mode — No credentials required",
   },
   workPermits: {

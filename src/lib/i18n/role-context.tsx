@@ -9,11 +9,16 @@ import {
   ReactNode,
 } from "react";
 
-export type UserRole = "SUPERVISOR" | "QHSE_ENGINEER";
+export type UserRole =
+  | "SUPERVISOR"
+  | "QHSE_ENGINEER"
+  | "RESPONSABLE_HSE"
+  | "SUPERVISEUR_HSE"
+  | "DRH"
+  | "RESPONSABLE_COMMERCIAL"
+  | "INGENIEUR_QHSE";
 
 export const ROLE_STORAGE_KEY = "eqhse-active-role";
-
-const DEFAULT_ROLE: UserRole = "SUPERVISOR";
 
 type RoleContextValue = {
   role: UserRole;
@@ -22,11 +27,14 @@ type RoleContextValue = {
 
 const RoleContext = createContext<RoleContextValue | null>(null);
 
+const DEFAULT_ROLE: UserRole = "SUPERVISOR";
+
 function resolveStoredRole(): UserRole {
   if (typeof window === "undefined") return DEFAULT_ROLE;
   try {
     const stored = window.localStorage.getItem(ROLE_STORAGE_KEY);
-    return stored === "QHSE_ENGINEER" ? "QHSE_ENGINEER" : DEFAULT_ROLE;
+    if (!stored) return DEFAULT_ROLE;
+    return stored as UserRole;
   } catch {
     return DEFAULT_ROLE;
   }

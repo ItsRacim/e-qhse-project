@@ -4,7 +4,7 @@ import LanguageToggle from "@/components/LanguageToggle";
 import RoleToggle from "@/components/RoleToggle";
 import { useLanguage } from "@/lib/i18n/language-context";
 import { useRole, type UserRole } from "@/lib/i18n/role-context";
-import { LogOut, ShieldCheck, UserCog } from "lucide-react";
+import { LogOut, ShieldCheck, UserCog, UserCheck, Users, UserKey } from "lucide-react";
 
 export default function TopBar() {
   const { t } = useLanguage();
@@ -19,11 +19,21 @@ export default function TopBar() {
   const roleLabels: Record<UserRole, string> = {
     SUPERVISOR: t("roles.supervisor"),
     QHSE_ENGINEER: t("roles.qhseEngineer"),
+    RESPONSABLE_HSE: t("roles.responsableHse"),
+    SUPERVISEUR_HSE: t("roles.superviseurHse"),
+    DRH: t("roles.drh"),
+    RESPONSABLE_COMMERCIAL: t("roles.responsableCommercial"),
+    INGENIEUR_QHSE: t("roles.ingenieurQhse"),
   };
 
-  const roleIcons: Record<UserRole, typeof ShieldCheck> = {
+  const roleIcons: Record<UserRole, React.ComponentType<{ className?: string }>> = {
     SUPERVISOR: ShieldCheck,
     QHSE_ENGINEER: UserCog,
+    RESPONSABLE_HSE: Users,
+    SUPERVISEUR_HSE: UserCheck,
+    DRH: UserKey,
+    RESPONSABLE_COMMERCIAL: Users,
+    INGENIEUR_QHSE: UserCog,
   };
 
   const RoleIcon = roleIcons[role];

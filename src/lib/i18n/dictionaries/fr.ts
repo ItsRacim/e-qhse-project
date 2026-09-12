@@ -17,6 +17,11 @@ export const fr: Dictionary = {
   roles: {
     supervisor: "Superviseur",
     qhseEngineer: "Ingénieur QHSE",
+    responsableHse: "Responsable HSE",
+    superviseurHse: "Superviseur HSE",
+    drh: "DRH",
+    responsableCommercial: "Responsable Commercial",
+    ingenieurQhse: "Ingénieur QHSE",
   },
   theme: { toggle: "Basculer le thème" },
   language: { toggle: "Changer la langue" },
@@ -57,6 +62,9 @@ export const fr: Dictionary = {
     requiredRole: "Rôle requis : {roles}",
     logout: "Se déconnecter",
     language: "Langue",
+    email: "Email",
+    password: "Mot de passe",
+    fullName: "Nom complet",
   },
   dashboard: {
     title: "Tableau de bord",
@@ -94,12 +102,15 @@ export const fr: Dictionary = {
     roleNotPermitted: "Rôle non autorisé. Un {roles} est requis.",
     close: "Fermer",
   },
-  login: {
+login: {
     subtitle: "Sélectionnez votre rôle pour accéder à la plateforme",
     supervisor: "Se connecter comme Superviseur",
     supervisorDesc: "Créer et gérer les permis de travail, soumettre pour approbation",
     qhseEngineer: "Se connecter comme Ingénieur QHSE",
     qhseEngineerDesc: "Examiner et approuver les permis, voir toutes les métriques de sécurité",
+    signin: "Se connecter",
+    signup: "Créer un compte",
+    jobPosition: "Poste / les postes",
     demoNotice: "Mode démo — Aucun identifiant requis",
   },
   workPermits: {

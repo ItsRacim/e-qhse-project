@@ -17,10 +17,15 @@ export const ar: Dictionary = {
   roles: {
     supervisor: "مشرف",
     qhseEngineer: "مهندس QHSE",
+    responsableHse: "مسؤول السلامة",
+    superviseurHse: "مشرف السلامة",
+    drh: "مدير الموارد البشرية",
+    responsableCommercial: "مدير تجاري",
+    ingenieurQhse: "مهندس السلامة",
   },
   theme: { toggle: "تبديل المظهر" },
   language: { toggle: "تغيير اللغة" },
-  common: {
+common: {
     verify: "تحقق",
     print: "طباعة",
     printPdf: "طباعة / تنزيل PDF",
@@ -50,13 +55,16 @@ export const ar: Dictionary = {
     save: "حفظ",
     actions: "إجراءات",
     createdBy: "أُنشئ بواسطة",
-    approvedBy: "اعتمد بواسطة",
+    approvedBy: "اعتماد بواسطة",
     awaitingApproval: "في انتظار الموافقة",
     originalTimestamp: "الطابع الزمني الأصلي",
     approvalHash: "رمز الموافقة",
     requiredRole: "الدور المطلوب: {roles}",
     logout: "تسجيل الخروج",
     language: "اللغة",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    fullName: "الاسم الكامل",
   },
   dashboard: {
     title: "لوحة التحكم",
@@ -93,12 +101,15 @@ export const ar: Dictionary = {
     roleNotPermitted: "الدور غير مسموح به. مطلوب: {roles}",
     close: "إغلاق",
   },
-  login: {
+login: {
     subtitle: "حدد دورك للوصول إلى المنصة",
     supervisor: "تسجيل الدخول كمشرف",
     supervisorDesc: "إنشاء وإدارة تصاريح العمل، إرسالها للموافقة",
     qhseEngineer: "تسجيل الدخول كمهندس QHSE",
     qhseEngineerDesc: "مراجعة واعتماد التصاريح، عرض جميع مقاييس السلامة",
+    signin: "تسجيل الدخول",
+    signup: "إنشاء حساب",
+    jobPosition: "المناصب",
     demoNotice: "وضع تجريبي — لا حاجة لبيانات اعتماد",
   },
   workPermits: {
