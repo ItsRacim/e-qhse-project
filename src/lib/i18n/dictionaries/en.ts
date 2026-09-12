@@ -108,6 +108,8 @@ login: {
     signin: "Sign In",
     signup: "Sign Up",
     jobPosition: "Job Position",
+    check_email: "Check your email",
+    email_sent: "Email sent successfully",
     demoNotice: "Demo mode — No credentials required",
   },
   workPermits: {

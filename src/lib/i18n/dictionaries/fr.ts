@@ -111,6 +111,8 @@ login: {
     signin: "Se connecter",
     signup: "Créer un compte",
     jobPosition: "Poste / les postes",
+    check_email: "Vérifiez votre email",
+    email_sent: "E-mail envoyé avec succès",
     demoNotice: "Mode démo — Aucun identifiant requis",
   },
   workPermits: {

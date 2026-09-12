@@ -110,6 +110,8 @@ login: {
     signin: "تسجيل الدخول",
     signup: "إنشاء حساب",
     jobPosition: "المناصب",
+    check_email: "تحقق بريدك الإلكتروني",
+    email_sent: "تم إرسال البريد الإلكتروني بنجاح",
     demoNotice: "وضع تجريبي — لا حاجة لبيانات اعتماد",
   },
   workPermits: {
