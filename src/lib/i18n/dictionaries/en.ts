@@ -107,10 +107,11 @@ login: {
     qhseEngineerDesc: "Review and approve permits, view all safety metrics",
     signin: "Sign In",
     signup: "Sign Up",
-    jobPosition: "Job Position",
     check_email: "Check your email",
     email_sent: "Email sent successfully",
-    demoNotice: "Demo mode — No credentials required",
+    signin_failed: "Sign in failed",
+    registration_failed: "Registration failed",
+    network_error: "Network error. Please try again later.",
   },
   workPermits: {
     title: "Work Permits",

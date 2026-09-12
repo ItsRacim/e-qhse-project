@@ -17,9 +17,11 @@ export default function LoginPage() {
 
   const [signinEmail, setSigninEmail] = useState("");
   const [signinPassword, setSigninPassword] = useState("");
+  const [_signinError, setSigninError] = useState<string | null>(null);
   const [signupFullName, setSignupFullName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
+  // eslint-disable-line
+const [signupPassword, setSignupPassword] = useState("");
 
   const roles = [
     "SUPERVISOR",
@@ -35,75 +37,133 @@ export default function LoginPage() {
     SUPERVISOR: "SUPERVISOR",
     QHSE_ENGINEER: "QHSE_ENGINEER",
     RESPONSABLE_HSE: "RESPONSABLE_HSE",
-    SUPERVISEUR_HSE: "SUPERVISEUR_HSE",
+    SUPERVISEUR_HSE: "Superviseur HSE",
     DRH: "DRH",
-    RESPONSABLE_COMMERCIAL: "RESPONSABLE_COMMERCIAL",
-    INGENIEUR_QHSE: "INGENIEUR_QHSE",
+    RESPONSABLE_COMMERCIAL: "Responsable Commercial",
+    INGENIEUR_QHSE: "Ingenieur QHSE",
   };
 
+  // Sign in with Supabase Auth
   const handleSignin = async () => {
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: signinEmail,
-      password: signinPassword,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: signinEmail,
+        password: signinPassword,
+      });
 
-    if (error) {
+      if (error) {
+        setSignupError("Erreur de connexion. Vérifiez vos identifiants.");
+        return;
+      }
+
+      if (data.session?.user?.app_metadata?.role) {
+        setRole(data.session.user.app_metadata.role as UserRole);
+      }
+
+      // Role-based redirection
+      const hseTechnicalRoles = ["SUPERVISOR", "QHSE_ENGINEER", "RESPONSABLE_HSE", "SUPERVISEUR_HSE", "INGENIEUR_QHSE"];
+      const commercialHrRoles = ["DRH", "RESPONSABLE_COMMERCIAL"];
+
+      if (hseTechnicalRoles.includes(data.session.user.app_metadata.role as UserRole)) {
+        router.push("/work-permits/new");
+      } else if (commercialHrRoles.includes(data.session.user.app_metadata.role as UserRole)) {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
+    } catch (_error) {
+      setSignupError("Erreur réseau. Veuillez réessayer.");
+    } finally {
       setLoading(false);
-      // Show error to user
-      return;
     }
-
-    if (data.session?.user?.app_metadata?.role) {
-      setRole(data.session.user.app_metadata.role as UserRole);
-    }
-
-    // Role-based redirection
-    const hseTechnicalRoles = ["SUPERVISOR", "QHSE_ENGINEER", "RESPONSABLE_HSE", "SUPERVISEUR_HSE", "INGENIEUR_QHSE"];
-    const commercialHrRoles = ["DRH", "RESPONSABLE_COMMERCIAL"];
-
-    if (hseTechnicalRoles.includes(data.session.user.app_metadata.role as UserRole)) {
-      router.push("/work-permits/new");
-    } else if (commercialHrRoles.includes(data.session.user.app_metadata.role as UserRole)) {
-      router.push("/dashboard");
-    } else {
-      router.push("/");
-    }
-    setLoading(false);
   };
 
+  // Sign up with fallback to local API route
   const handleSignup = async () => {
     setLoading(true);
     setSignupError(null);
     setSignupSuccess(null);
 
-    // Sign up with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email: signupEmail,
-      password: signupPassword,
-      options: {
-        data: {
-          fullName: signupFullName,
-          role: "SUPERVISOR", // Default role, will be updated on first login
+    // First try Supabase Auth
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: signupEmail,
+        password: signupPassword,
+        options: {
+          data: {
+            fullName: signupFullName,
+            role: "SUPERVISOR",
+          },
         },
-      },
-    });
+      });
 
-    setLoading(false);
+      if (error) {
+        // If Supabase throws a network/fetch error, fallback to local API
+        if (error instanceof Error && (error.message.includes("network") || error.message.includes("fetch"))) {
+          // Fallback to local Prisma-based registration
+          try {
+            const fallbackUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+            const fallbackResponse = await fetch(fallbackUrl + "/api/auth/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: signupEmail,
+                password: signupPassword,
+                name: signupFullName,
+                role: "SUPERVISOR",
+              }),
+            });
 
-if (error) {
-      setSignupError((error as Error).message);
-      return;
-    }
+            const fallbackData = await fallbackResponse.json();
 
-    // Check if user was created and needs email verification
-    if (data.user) {
-      // User is created but not yet verified - show confirmation message
-      // The user will be redirected to the callback route after clicking the verification link
+            if (fallbackData.success) {
+              setRole("SUPERVISOR" as UserRole);
+              router.push("/dashboard");
+              setLoading(false);
+              return;
+            } else {
+              setSignupError(fallbackData.error || "Échec de l'inscription. Veuillez réessayer.");
+              setLoading(false);
+              return;
+            }
+          } catch (_err) {
+            // Both Supabase and fallback failed
+            setSignupError("Erreur réseau. Veuillez réessayer plus tard.");
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Supabase error but not a network error - show it
+        setSignupError(_error instanceof Error ? _error.message : "Échec de l'inscription. Veuillez réessayer.");
+        setLoading(false);
+        return;
+      }
+
+      // Supabase signUp succeeded
+      if (data.user) {
+        // User created via Supabase - set role and redirect
+        if (data.session?.user?.app_metadata?.role) {
+          setRole(data.session.user.app_metadata.role as UserRole);
+        } else {
+          setRole("SUPERVISOR" as UserRole);
+        }
+        router.push("/dashboard");
+        setLoading(false);
+        return;
+      }
+
+      // Check if user was created but needs email verification
       setSignupSuccess(true);
-    } else if (error) {
-      setSignupError("Une erreur s'est produite lors de l'inscription");
+    } catch (error) {
+      // Network error or other unexpected error
+      setSignupError("Erreur réseau. Veuillez réessayer plus tard.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -213,19 +273,6 @@ if (error) {
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     placeholder="votre.email@entreprise.com"
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    {t("common.password")}
-                  </label>
-                  <input
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    type="password"
-                    placeholder="••••••••"
                     className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-800 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                     required
                   />

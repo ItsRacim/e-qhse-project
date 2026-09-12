@@ -112,7 +112,9 @@ login: {
     jobPosition: "المناصب",
     check_email: "تحقق بريدك الإلكتروني",
     email_sent: "تم إرسال البريد الإلكتروني بنجاح",
-    demoNotice: "وضع تجريبي — لا حاجة لبيانات اعتماد",
+    signin_failed: "فشل تسجيل الدخول",
+    registration_failed: "فشل التسجيل",
+    network_error: "خطأ في الشبكة. حاول مرة أخرى لاحقاً.",
   },
   workPermits: {
     title: "تصاريح العمل",

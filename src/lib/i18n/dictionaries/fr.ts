@@ -113,7 +113,9 @@ login: {
     jobPosition: "Poste / les postes",
     check_email: "Vérifiez votre email",
     email_sent: "E-mail envoyé avec succès",
-    demoNotice: "Mode démo — Aucun identifiant requis",
+    signin_failed: "Échec de la connexion",
+    registration_failed: "Échec de l'inscription",
+    network_error: "Erreur réseau. Veuillez réessayer plus tard.",
   },
   workPermits: {
     title: "Permis de travail",
